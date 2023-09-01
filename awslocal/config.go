@@ -3,6 +3,7 @@ package awslocal
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
@@ -15,7 +16,8 @@ type localResolver struct {
 }
 
 func (r localResolver) ResolveEndpoint(service string, region string, options ...interface{}) (aws.Endpoint, error) {
-	return aws.Endpoint{URL: ("http://" + r.Host + r.Port)}, nil
+	url := fmt.Sprint("http://", r.Host, ":", r.Port)
+	return aws.Endpoint{URL: url}, nil
 }
 
 func resolveWithLocalPort(host string, port string) aws.EndpointResolverWithOptions {
