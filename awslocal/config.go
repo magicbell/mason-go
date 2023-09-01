@@ -10,23 +10,25 @@ import (
 )
 
 type localResolver struct {
+	Host string
 	Port string
 }
 
 func (r localResolver) ResolveEndpoint(service string, region string, options ...interface{}) (aws.Endpoint, error) {
-	return aws.Endpoint{URL: (`http://localhost:` + r.Port)}, nil
+	return aws.Endpoint{URL: (r.Host + r.Port)}, nil
 }
 
-func resolveWithLocalPort(port string) aws.EndpointResolverWithOptions {
+func resolveWithLocalPort(host string, port string) aws.EndpointResolverWithOptions {
 	return localResolver{
 		Port: port,
+		Host: host,
 	}
 }
 
-func NewAWSLocalCfg(port string) (aws.Config, error) {
+func NewAWSLocalCfg(host string, port string) (aws.Config, error) {
 	return config.LoadDefaultConfig(context.Background(),
 		config.WithRegion("eu-west-1"),
-		config.WithEndpointResolverWithOptions(resolveWithLocalPort(port)),
+		config.WithEndpointResolverWithOptions(resolveWithLocalPort(host, port)),
 		config.WithCredentialsProvider(credentials.StaticCredentialsProvider{
 			Value: aws.Credentials{
 				AccessKeyID:     "test",
