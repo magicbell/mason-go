@@ -15,7 +15,7 @@ type localResolver struct {
 }
 
 func (r localResolver) ResolveEndpoint(service string, region string, options ...interface{}) (aws.Endpoint, error) {
-	return aws.Endpoint{URL: (r.Host + r.Port)}, nil
+	return aws.Endpoint{URL: ("http://" + r.Host + r.Port)}, nil
 }
 
 func resolveWithLocalPort(host string, port string) aws.EndpointResolverWithOptions {
