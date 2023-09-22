@@ -1,4 +1,4 @@
-package ddbstream
+package listener
 
 // containsString returns true if want is in the set, ss
 func containsString(ss []string, want string) bool {

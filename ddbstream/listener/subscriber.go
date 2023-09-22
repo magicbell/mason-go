@@ -1,5 +1,5 @@
-// Package ddbstream offers a way to subscribe to a DynamoDB stream without lambda triggers.
-package ddbstream
+// package listener offers a way to subscribe to a DynamoDB stream without lambda triggers.
+package listener
 
 import (
 	"context"
@@ -98,13 +98,13 @@ type Subscriber struct {
 	options Options
 }
 
-func New(api *dynamodb.Client, streamAPI *dynamodbstreams.Client, tableName string, opts ...Option) *Stream {
+func New(api *dynamodb.Client, streamAPI *dynamodbstreams.Client, tableName *string, opts ...Option) *Stream {
 	options := buildOptions(opts...)
 	return &Stream{
 		api:       api,
 		options:   options,
 		streamAPI: streamAPI,
-		tableName: tableName,
+		tableName: *tableName,
 	}
 }
 

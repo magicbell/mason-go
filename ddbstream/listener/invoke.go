@@ -1,4 +1,4 @@
-package ddbstream
+package listener
 
 import (
 	"context"

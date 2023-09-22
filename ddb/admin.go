@@ -7,10 +7,23 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
+	"go.uber.org/zap"
 )
 
-func CreateTable(ddbClient *dynamodb.Client, tableName string) error {
-	_, err := ddbClient.CreateTable(context.Background(), &dynamodb.CreateTableInput{
+type Admin struct {
+	log    *zap.SugaredLogger
+	client *dynamodb.Client
+}
+
+func NewAdmin(log *zap.SugaredLogger, ddbClient *dynamodb.Client) *Admin {
+	return &Admin{
+		log:    log,
+		client: ddbClient,
+	}
+}
+
+func (a *Admin) CreateTable(tableName string) error {
+	_, err := a.client.CreateTable(context.Background(), &dynamodb.CreateTableInput{
 		TableName: &tableName,
 		AttributeDefinitions: []types.AttributeDefinition{
 			{AttributeName: aws.String("PK"), AttributeType: types.ScalarAttributeTypeS},
