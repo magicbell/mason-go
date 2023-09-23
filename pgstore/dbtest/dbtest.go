@@ -96,7 +96,8 @@ func StartDDB() (*dockertest.Resource, *dynamodbstreams.Client, *dynamodb.Client
 		ddbClient = dynamodb.NewFromConfig(cfg)
 		ddbStreamsClient = dynamodbstreams.NewFromConfig(cfg)
 
-		err = ddb.CreateTable(ddbClient, tableName)
+		admin := ddb.NewAdmin(ddbClient)
+		err = admin.CreateTable(tableName)
 		if err != nil {
 			return fmt.Errorf("CreateTable: %w", err)
 		}

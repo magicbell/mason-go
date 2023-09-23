@@ -7,17 +7,14 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
-	"go.uber.org/zap"
 )
 
 type Admin struct {
-	log    *zap.SugaredLogger
 	client *dynamodb.Client
 }
 
-func NewAdmin(log *zap.SugaredLogger, ddbClient *dynamodb.Client) *Admin {
+func NewAdmin(ddbClient *dynamodb.Client) *Admin {
 	return &Admin{
-		log:    log,
 		client: ddbClient,
 	}
 }
