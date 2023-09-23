@@ -4,18 +4,18 @@ package lambda
 import (
 	"context"
 	"fmt"
+	"net/http"
 
 	"github.com/aws/aws-lambda-go/events"
 	lambdaproxy "github.com/awslabs/aws-lambda-go-api-proxy/core"
-	"github.com/magicbell-io/gofoundation/web"
 )
 
-// HTTP represents the lambda router.
 type HTTP struct {
-	App *web.App
+	App http.Handler
 }
 
 // APIGWHandler routes the lambda request (proxied from the API GW) to an internal endpoint.
+// Function URLs use the same format
 func (l HTTP) APIGWHandler(ctx context.Context, request events.APIGatewayV2HTTPRequest) (events.APIGatewayV2HTTPResponse, error) {
 	var ra lambdaproxy.RequestAccessorV2
 

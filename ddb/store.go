@@ -8,21 +8,18 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodbstreams"
-	"go.uber.org/zap"
 )
 
 // DDBStore represents the DynamoDB store in the application.
 type Store struct {
-	log       *zap.SugaredLogger
 	client    *dynamodb.Client
 	tableName *string
 }
 
 // New constructs a DynamoDB store.
-func NewStore(log *zap.SugaredLogger, client *dynamodb.Client, streamClient *dynamodbstreams.Client, tableName *string) *Store {
+func NewStore(client *dynamodb.Client, streamClient *dynamodbstreams.Client, tableName *string) *Store {
 	return &Store{
 		client:    client,
-		log:       log,
 		tableName: tableName,
 	}
 }
@@ -62,8 +59,6 @@ func (s *Store) Fetch(ctx context.Context, pk string, sk string) (map[string]typ
 	if err != nil {
 		return out.Item, err
 	}
-
-	s.log.Infow("ddb.GetItem", "out", out)
 
 	return out.Item, nil
 }

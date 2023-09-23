@@ -9,12 +9,10 @@ import (
 	typesStream "github.com/aws/aws-sdk-go-v2/service/dynamodbstreams/types"
 	"github.com/google/uuid"
 	"github.com/magicbell-io/gofoundation/ddb"
-	"go.uber.org/zap"
 )
 
 // Processor represents the ddbstream processor.
 type Processor struct {
-	log      *zap.SugaredLogger
 	ddb      *ddb.Store
 	handlers map[string]map[string][]HandleFunc
 }
@@ -25,9 +23,8 @@ var mapping = map[typesStream.OperationType]string{
 	typesStream.OperationTypeRemove: "deleted",
 }
 
-func NewProcessor(log *zap.SugaredLogger, ddb *ddb.Store) *Processor {
+func NewProcessor(ddb *ddb.Store) *Processor {
 	return &Processor{
-		log:      log,
 		ddb:      ddb,
 		handlers: map[string]map[string][]HandleFunc{},
 	}
@@ -56,7 +53,6 @@ func (p *Processor) Process(ctx context.Context, records []*typesStream.Record) 
 			PK:     pk.Value,
 			SK:     sk.Value,
 		}
-		p.log.Infow("ddbStream.Process", "event", evt)
 
 		//   TODO: Only process records that aren't using composite keys and pk == sk?
 		handlers, exist := p.handlers[evt.Source][evt.Type]
@@ -65,7 +61,6 @@ func (p *Processor) Process(ctx context.Context, records []*typesStream.Record) 
 		}
 
 		for _, handler := range handlers {
-			p.log.Infow("invoking registered handler", "event", evt)
 			if err := handler(ctx, evt); err != nil {
 				return err
 			}
