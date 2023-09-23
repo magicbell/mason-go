@@ -3,7 +3,7 @@ package awslocal_test
 import (
 	"testing"
 
-	"github.com/magicbell-io/gofoundation/awslocal"
+	"github.com/magicbell-io/mason-go/awslocal"
 )
 
 func Test_AwsLocalCfg(t *testing.T) {

@@ -1,6 +1,6 @@
-module github.com/magicbell-io/gofoundation
+module github.com/magicbell-io/mason-go
 
-go 1.20
+go 1.21
 
 require (
 	github.com/aws/aws-lambda-go v1.41.0
@@ -11,7 +11,6 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.15.5
 	github.com/awslabs/aws-lambda-go-api-proxy v0.14.0
 	github.com/google/uuid v1.3.1
-	github.com/xeipuuv/gojsonschema v1.2.0
 	golang.org/x/sync v0.3.0
 )
 
@@ -27,10 +26,7 @@ require (
 	github.com/aws/aws-sdk-go-v2/service/ssooidc v1.15.5 // indirect
 	github.com/aws/aws-sdk-go-v2/service/sts v1.21.5 // indirect
 	github.com/aws/smithy-go v1.14.2 // indirect
-	github.com/google/go-cmp v0.5.9 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
-	github.com/onsi/gomega v1.27.10 // indirect
-	github.com/stretchr/testify v1.8.1 // indirect
-	github.com/xeipuuv/gojsonpointer v0.0.0-20180127040702-4e3ac2762d5f // indirect
-	github.com/xeipuuv/gojsonreference v0.0.0-20180127040603-bd5ef7bd5415 // indirect
+	golang.org/x/net v0.12.0 // indirect
+	golang.org/x/sys v0.10.0 // indirect
 )

@@ -8,7 +8,7 @@ import (
 
 	typesStream "github.com/aws/aws-sdk-go-v2/service/dynamodbstreams/types"
 	"github.com/google/uuid"
-	"github.com/magicbell-io/gofoundation/ddb"
+	"github.com/magicbell-io/mason-go/ddb"
 )
 
 // Processor represents the ddbstream processor.
