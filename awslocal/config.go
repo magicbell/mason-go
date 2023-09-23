@@ -10,24 +10,24 @@ import (
 	"github.com/aws/aws-sdk-go-v2/credentials"
 )
 
-type localResolver struct {
+type resolver struct {
 	Host string
 	Port string
 }
 
-func (r localResolver) ResolveEndpoint(service string, region string, options ...interface{}) (aws.Endpoint, error) {
+func (r resolver) ResolveEndpoint(service string, region string, options ...interface{}) (aws.Endpoint, error) {
 	url := fmt.Sprint("http://", r.Host, ":", r.Port)
 	return aws.Endpoint{URL: url}, nil
 }
 
 func resolveWithLocalPort(host string, port string) aws.EndpointResolverWithOptions {
-	return localResolver{
+	return resolver{
 		Port: port,
 		Host: host,
 	}
 }
 
-func NewAWSLocalCfg(host string, port string) (aws.Config, error) {
+func NewConfig(host string, port string) (aws.Config, error) {
 	return config.LoadDefaultConfig(context.Background(),
 		config.WithRegion("eu-west-1"),
 		config.WithEndpointResolverWithOptions(resolveWithLocalPort(host, port)),
