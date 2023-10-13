@@ -8,8 +8,8 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodbstreams"
-	"github.com/magicbell-io/mason-go/awslocal"
-	"github.com/magicbell-io/mason-go/ddb"
+	"github.com/code-inbox/mason-go/awslocal"
+	"github.com/code-inbox/mason-go/ddb"
 	"github.com/ory/dockertest"
 )
 

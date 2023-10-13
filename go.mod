@@ -1,4 +1,4 @@
-module github.com/magicbell-io/mason-go
+module github.com/code-inbox/mason-go
 
 go 1.21
 
