@@ -41,29 +41,38 @@ func (p *Processor) Process(ctx context.Context, records []*typesStream.Record) 
 			return fmt.Errorf("invalid pk: %s", pk.Value)
 		}
 
+		src := parts[0]
 		id, err := uuid.Parse(parts[1])
 		if err != nil {
 			return fmt.Errorf("ID is not UUID: %s", parts[1])
 		}
 
-		evt := Event{
-			Source: parts[0],
-			Type:   mapping[record.EventName],
-			ID:     id,
-			PK:     pk.Value,
-			SK:     sk.Value,
-		}
+		parts = strings.Split(sk.Value, "#")
+		skSrc := parts[0]
 
-		//   TODO: Only process records that aren't using composite keys and pk == sk?
-		handlers, exist := p.handlers[evt.Source][evt.Type]
-		if !exist {
-			continue
-		}
-
-		for _, handler := range handlers {
-			if err := handler(ctx, evt); err != nil {
-				return err
+		switch {
+		case src == skSrc:
+			evt := Event{
+				Source: src,
+				Type:   mapping[record.EventName],
+				ID:     id,
+				PK:     pk.Value,
+				SK:     sk.Value,
 			}
+
+			handlers, exist := p.handlers[evt.Source][evt.Type]
+			if !exist {
+				continue
+			}
+
+			for _, handler := range handlers {
+				if err := handler(ctx, evt); err != nil {
+					return err
+				}
+			}
+		default:
+			// skip events on items with composite keys
+			return nil
 		}
 	}
 
