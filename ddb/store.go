@@ -44,6 +44,16 @@ func (s *Store) Create(ctx context.Context, item map[string]types.AttributeValue
 	return nil
 }
 
+func (s *Store) Query(ctx context.Context, input *dynamodb.QueryInput) ([]map[string]types.AttributeValue, error) {
+	input.TableName = s.tableName
+	out, err := s.client.Query(ctx, input)
+	if err != nil {
+		return nil, fmt.Errorf("ddb.QueryPages: %w", err)
+	}
+
+	return out.Items, nil
+}
+
 func (s *Store) Fetch(ctx context.Context, pk string, sk string) (map[string]types.AttributeValue, error) {
 	out, err := s.client.GetItem(ctx, &dynamodb.GetItemInput{
 		TableName: s.tableName,
