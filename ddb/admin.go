@@ -25,6 +25,8 @@ func (a *Admin) CreateTable(tableName string) error {
 		AttributeDefinitions: []types.AttributeDefinition{
 			{AttributeName: aws.String("PK"), AttributeType: types.ScalarAttributeTypeS},
 			{AttributeName: aws.String("SK"), AttributeType: types.ScalarAttributeTypeS},
+			{AttributeName: aws.String("GSI1PK"), AttributeType: types.ScalarAttributeTypeS},
+			{AttributeName: aws.String("GSI1SK"), AttributeType: types.ScalarAttributeTypeS},
 		},
 		KeySchema: []types.KeySchemaElement{
 			{
@@ -36,6 +38,26 @@ func (a *Admin) CreateTable(tableName string) error {
 				KeyType:       types.KeyTypeRange,
 			},
 		},
+		GlobalSecondaryIndexes: []types.GlobalSecondaryIndex{{
+			IndexName: aws.String("GSI1"),
+			KeySchema: []types.KeySchemaElement{
+				{
+					AttributeName: aws.String("GSI1PK"),
+					KeyType:       types.KeyTypeHash,
+				},
+				{
+					AttributeName: aws.String("GSI1SK"),
+					KeyType:       types.KeyTypeRange,
+				},
+			},
+			Projection: &types.Projection{
+				ProjectionType: types.ProjectionTypeAll,
+			},
+			ProvisionedThroughput: &types.ProvisionedThroughput{
+				ReadCapacityUnits:  aws.Int64(1),
+				WriteCapacityUnits: aws.Int64(1),
+			},
+		}},
 		ProvisionedThroughput: &types.ProvisionedThroughput{
 			ReadCapacityUnits:  aws.Int64(1),
 			WriteCapacityUnits: aws.Int64(1),
