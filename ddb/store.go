@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodbstreams"
@@ -24,19 +25,22 @@ func NewStore(client *dynamodb.Client, streamClient *dynamodbstreams.Client, tab
 	}
 }
 
-type coreItem struct {
-	PK     string `dynamodbav:"PK"`
-	SK     string `dynamodbav:"SK"`
-	record interface{}
+type Item interface {
+	GetType() string
 }
 
-func (s *Store) Create(ctx context.Context, item map[string]types.AttributeValue) error {
-	input := dynamodb.PutItemInput{
-		TableName: s.tableName,
-		Item:      item,
+func (s *Store) Create(ctx context.Context, item Item) error {
+	ddbItem, err := attributevalue.MarshalMap(item)
+	if err != nil {
+		return fmt.Errorf("av.MarshalMap: %w", err)
 	}
 
-	_, err := s.client.PutItem(ctx, &input)
+	input := dynamodb.PutItemInput{
+		TableName: s.tableName,
+		Item:      ddbItem,
+	}
+
+	_, err = s.client.PutItem(ctx, &input)
 	if err != nil {
 		return fmt.Errorf("ddb.PutItem: %w", err)
 	}
