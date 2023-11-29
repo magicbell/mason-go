@@ -248,7 +248,7 @@ func (s *Subscriber) mainLoop(ctx context.Context, streamARN string) (err error)
 		}
 	})
 	group.Go(func() error {
-		ticker := time.NewTicker(s.options.pollInterval)
+		ticker := time.NewTicker(s.options.maxBatchWait)
 		defer ticker.Stop()
 
 		var records []*types.Record
@@ -387,7 +387,7 @@ func (s *Subscriber) iterateShard(ctx context.Context, streamARN string, shard *
 				select {
 				case <-ctx.Done():
 					return nil
-				case <-time.After(3 * time.Second):
+				case <-time.After(s.options.pollInterval):
 					// ok
 				}
 			}

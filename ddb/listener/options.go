@@ -13,6 +13,7 @@ const (
 
 type Options struct {
 	batchSize         int
+	maxBatchWait      time.Duration
 	debug             func(format string, args ...interface{})
 	pollInterval      time.Duration
 	shardIteratorType string
@@ -44,6 +45,12 @@ func WithPollInterval(interval time.Duration) Option {
 	}
 }
 
+func WithMaxBatchWait(interval time.Duration) Option {
+	return func(o *Options) {
+		o.maxBatchWait = interval
+	}
+}
+
 func buildOptions(opts ...Option) Options {
 	options := Options{}
 	for _, opt := range opts {
@@ -58,6 +65,9 @@ func buildOptions(opts ...Option) Options {
 	}
 	if options.pollInterval <= 0 {
 		options.pollInterval = defaultInterval
+	}
+	if options.maxBatchWait <= 0 {
+		options.maxBatchWait = defaultInterval
 	}
 	if options.shardIteratorType == "" {
 		options.shardIteratorType = string(types.ShardIteratorTypeLatest)
