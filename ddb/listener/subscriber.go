@@ -257,10 +257,18 @@ func (s *Subscriber) mainLoop(ctx context.Context, streamARN string) (err error)
 				return nil
 			}
 
+			c := 0
 			for {
 				if err := s.invoker(ctx, records); err != nil {
+					c += 1
+					if c > s.options.retryCount {
+						s.options.debug("callback failed, giving up after %d attempts", c)
+						records = nil
+						return nil
+					}
+
 					delay := 3 * time.Second
-					fmt.Printf("callback failed - %v; will retry in %v\n", err, delay)
+					s.options.debug("callback failed, retry: %d in %s %v ", err, c, delay)
 
 					select {
 					case <-ctx.Done():
