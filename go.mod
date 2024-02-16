@@ -10,8 +10,8 @@ require (
 	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.12.2
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.25.2
 	github.com/aws/aws-sdk-go-v2/service/dynamodbstreams v1.17.2
-	github.com/awslabs/aws-lambda-go-api-proxy v0.14.0
-	github.com/google/uuid v1.3.1
+	github.com/awslabs/aws-lambda-go-api-proxy v0.16.1
+	github.com/google/uuid v1.5.0
 	golang.org/x/sync v0.3.0
 )
 
@@ -49,6 +49,6 @@ require (
 	github.com/aws/smithy-go v1.17.0 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/ory/dockertest v3.3.5+incompatible
-	golang.org/x/net v0.12.0 // indirect
-	golang.org/x/sys v0.10.0 // indirect
+	golang.org/x/net v0.20.0 // indirect
+	golang.org/x/sys v0.16.0 // indirect
 )
