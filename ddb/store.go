@@ -34,6 +34,9 @@ func (s *Store) Create(ctx context.Context, item Item) error {
 	if err != nil {
 		return fmt.Errorf("av.MarshalMap: %w", err)
 	}
+	ddbItem["Type"] = &types.AttributeValueMemberS{
+		Value: item.GetType(),
+	}
 
 	input := dynamodb.PutItemInput{
 		TableName: s.tableName,
