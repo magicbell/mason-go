@@ -38,11 +38,11 @@ func (s *Store) Create(ctx context.Context, item Item) error {
 
 	if _, ok := (ddbItem["CreatedAt"]).(*types.AttributeValueMemberS); !ok {
 		ddbItem["CreatedAt"] = &types.AttributeValueMemberS{
-			Value: time.Now().UTC().Format(time.RFC3339),
+			Value: time.Now().UTC().String(),
 		}
 	}
 	ddbItem["UpdatedAt"] = &types.AttributeValueMemberS{
-		Value: time.Now().UTC().Format(time.RFC3339),
+		Value: time.Now().UTC().String(),
 	}
 	ddbItem["Type"] = &types.AttributeValueMemberS{
 		Value: item.GetType(),
