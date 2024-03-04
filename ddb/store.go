@@ -4,6 +4,7 @@ package ddb
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
@@ -33,6 +34,15 @@ func (s *Store) Create(ctx context.Context, item Item) error {
 	ddbItem, err := attributevalue.MarshalMap(item)
 	if err != nil {
 		return fmt.Errorf("av.MarshalMap: %w", err)
+	}
+
+	if _, ok := (ddbItem["CreatedAt"]).(*types.AttributeValueMemberS); !ok {
+		ddbItem["CreatedAt"] = &types.AttributeValueMemberS{
+			Value: time.Now().UTC().Format(time.RFC3339),
+		}
+	}
+	ddbItem["UpdatedAt"] = &types.AttributeValueMemberS{
+		Value: time.Now().UTC().Format(time.RFC3339),
 	}
 	ddbItem["Type"] = &types.AttributeValueMemberS{
 		Value: item.GetType(),
