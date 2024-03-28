@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
@@ -30,7 +31,7 @@ type Item interface {
 	GetType() string
 }
 
-func (s *Store) Create(ctx context.Context, item Item) error {
+func (s *Store) Save(ctx context.Context, item Item) error {
 	ddbItem, err := attributevalue.MarshalMap(item)
 	if err != nil {
 		return fmt.Errorf("av.MarshalMap: %w", err)
@@ -88,6 +89,32 @@ func (s *Store) Fetch(ctx context.Context, pk string, sk string) (map[string]typ
 	}
 
 	return out.Item, nil
+}
+
+func (s *Store) Discard(ctx context.Context, pk string, sk string) error {
+	_, err := s.client.UpdateItem(ctx, &dynamodb.UpdateItemInput{
+		TableName: s.tableName,
+		Key: map[string]types.AttributeValue{
+			"PK": &types.AttributeValueMemberS{
+				Value: pk,
+			},
+			"SK": &types.AttributeValueMemberS{
+				Value: sk,
+			},
+		},
+		UpdateExpression:    aws.String("SET DiscardedAt = :discardedAt"),
+		ConditionExpression: aws.String("attribute_exists(PK) AND attribute_exists(SK)"),
+		ExpressionAttributeValues: map[string]types.AttributeValue{
+			":discardedAt": &types.AttributeValueMemberS{
+				Value: time.Now().UTC().Format(time.RFC3339Nano),
+			},
+		},
+	})
+	if err != nil {
+		return fmt.Errorf("ddb.DiscardItem: %w", err)
+	}
+
+	return nil
 }
 
 func (s *Store) Count(ctx context.Context) (int32, error) {
