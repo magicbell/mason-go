@@ -117,6 +117,25 @@ func (s *Store) Discard(ctx context.Context, pk string, sk string) error {
 	return nil
 }
 
+func (s *Store) Delete(ctx context.Context, pk string, sk string) error {
+	_, err := s.client.DeleteItem(ctx, &dynamodb.DeleteItemInput{
+		TableName: s.tableName,
+		Key: map[string]types.AttributeValue{
+			"PK": &types.AttributeValueMemberS{
+				Value: pk,
+			},
+			"SK": &types.AttributeValueMemberS{
+				Value: sk,
+			},
+		},
+	})
+	if err != nil {
+		return fmt.Errorf("ddb.DeleteItem: %w", err)
+	}
+
+	return nil
+}
+
 func (s *Store) Count(ctx context.Context) (int32, error) {
 	input := &dynamodb.ScanInput{
 		TableName: s.tableName,
