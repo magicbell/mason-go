@@ -85,7 +85,11 @@ func (s *Store) Fetch(ctx context.Context, pk string, sk string) (map[string]typ
 		},
 	})
 	if err != nil {
-		return out.Item, err
+		return nil, fmt.Errorf("ddb.GetItem: %w", err)
+	}
+
+	if len(out.Item) == 0 {
+		return nil, fmt.Errorf("item not found")
 	}
 
 	return out.Item, nil
