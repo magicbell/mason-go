@@ -5,6 +5,8 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"net/url"
+	"regexp"
 
 	"github.com/aws/aws-lambda-go/events"
 	lambdaproxy "github.com/awslabs/aws-lambda-go-api-proxy/core"
@@ -39,6 +41,16 @@ func (l HTTP) ALBHandler(ctx context.Context, request events.ALBTargetGroupReque
 		return events.ALBTargetGroupResponse{}, fmt.Errorf("ra.EventToRequestWithContext: %w", err)
 	}
 
+	// Unescape RawQuery to undo the forced escaping by the `aws-lambda-go-api-proxy`. The forced escaping leads to
+	// double encoding (once by the client, once by alb) issues. Which in practice means that a `something=key:value`
+	// is encoded to `something=key%3Avalue` by the browser, and to `something=key%253Avalue` by ALB.
+	// see: https://github.com/awslabs/aws-lambda-go-api-proxy/blob/55b777941b8d253f60a7aecf355cfd0a64f89dd7/core/requestALB.go#L135-L146
+	if r.URL != nil && r.URL.RawQuery != "" && isLikelyDoubleEscaped(r.URL.RawQuery) {
+		if unescaped, err := url.QueryUnescape(r.URL.RawQuery); err == nil {
+			r.URL.RawQuery = unescaped
+		}
+	}
+
 	w := lambdaproxy.NewProxyResponseWriterALB()
 	l.App.ServeHTTP(w, r)
 
@@ -48,4 +60,10 @@ func (l HTTP) ALBHandler(ctx context.Context, request events.ALBTargetGroupReque
 	}
 
 	return evt, nil
+}
+
+var doubleEncodedRE = regexp.MustCompile(`%25[0-9A-Fa-f]{2}`)
+
+func isLikelyDoubleEscaped(raw string) bool {
+	return doubleEncodedRE.MatchString(raw)
 }
